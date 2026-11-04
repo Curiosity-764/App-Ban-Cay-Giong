@@ -1,10 +1,10 @@
 import Layout from './components/layout/Layout';
-
+import HomePageProduct from './pages/HomePageProduct.tsx';
 export default function App() {
   return (
       <Layout>
         <div className="container py-5 text-center" style={{ minHeight: '40vh' }}>
-          <h2 className="mb-3">Nội dung ở đây ( CHƯA LÀM ) </h2>
+          <HomePageProduct />
         </div>
       </Layout>
   );
