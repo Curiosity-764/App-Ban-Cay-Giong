@@ -3,10 +3,13 @@ import { useAppDispatch, useAppSelector } from '../features/hooks';
 import { fetchProducts, setCategory } from '../features/products/productsSlice';
 import ProductCard from '../components/ProductCard';
 import { categories } from '../data/categories';
+import { useSearchParams } from 'react-router-dom';
 
 export default function HomePageProduct() {
     const dispatch = useAppDispatch();
     const { items, status, activeCategory } = useAppSelector((state) => state.products);
+    const [searchParams] = useSearchParams();
+    const searchTerm = (searchParams.get('q') ?? '').trim().toLocaleLowerCase('vi');
 
     useEffect(() => {
         if (status === 'idle') {
@@ -14,9 +17,16 @@ export default function HomePageProduct() {
         }
     }, [status, dispatch]);
 
-    const visibleProducts = activeCategory === 'Tất cả'
-        ? items
-        : items.filter(p => p.category === activeCategory);
+    const visibleProducts = items.filter((product) => {
+        const matchesCategory =
+            activeCategory === 'Tất cả' || product.category === activeCategory;
+
+        const matchesName = product.name
+            .toLocaleLowerCase('vi')
+            .includes(searchTerm);
+
+        return matchesCategory && matchesName;
+    });
 
     return (
         <div className="container py-4">
@@ -72,7 +82,11 @@ export default function HomePageProduct() {
                     {status === 'loading' && <p>Đang tải sản phẩm...</p>}
 
                     {status === 'succeeded' && visibleProducts.length === 0 && (
-                        <p className="text-muted">Không có sản phẩm nào trong danh mục này.</p>
+                        <p className="text-muted">
+                            {searchTerm
+                                ? `Không tìm thấy sản phẩm có tên "${searchParams.get('q')}".`
+                                : 'Không có sản phẩm nào trong danh mục này.'}
+                        </p>
                     )}
 
                     {status === 'succeeded' && visibleProducts.length > 0 && (

@@ -1,4 +1,14 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export default function Header() {
+    const [keyword, setKeyword] = useState('');
+    const navigate = useNavigate();
+
+    function handleSearch(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        navigate(`/san-pham?q=${encodeURIComponent(keyword.trim())}`);
+    }
     return (
         <header className="bg-white border-bottom py-3">
             <div className="container d-flex align-items-center justify-content-between">
@@ -8,17 +18,28 @@ export default function Header() {
                 </a>
 
                 {/* Search Bar */}
-                <div className="d-flex flex-grow-1 mx-4" style={{ maxWidth: '600px' }}>
+                <form
+                    className="d-flex flex-grow-1 mx-4"
+                    style={{ maxWidth: '600px' }}
+                    onSubmit={handleSearch}
+                >
                     <div className="input-group">
-                        <select className="form-select flex-grow-0 w-auto bg-light text-muted border-end-0" style={{ maxWidth: '120px' }}>
-                            <option>Sản phẩm</option>
-                        </select>
-                        <input type="text" className="form-control border-start-0" placeholder="Nhập từ khóa cần tìm" />
-                        <button className="btn text-white fw-bold px-4" style={{ backgroundColor: '#2d5016' }}>
+                        <input
+                            type="search"
+                            className="form-control"
+                            placeholder="Nhập tên sản phẩm cần tìm"
+                            value={keyword}
+                            onChange={(event) => setKeyword(event.target.value)}
+                        />
+                        <button
+                            type="submit"
+                            className="btn text-white fw-bold px-4"
+                            style={{ backgroundColor: '#2d5016' }}
+                        >
                             Tìm kiếm
                         </button>
                     </div>
-                </div>
+                </form>
 
                 {/* Right Actions */}
                 <div className="d-flex align-items-center gap-4">
