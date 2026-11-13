@@ -7,6 +7,7 @@ export interface Product {
     stock: number;
     unit: string;
     category: string;
+    subCategory?: string;
 }
 
 export const localProduct: Product[] = [
@@ -62,6 +63,7 @@ export const localProduct: Product[] = [
         stock: 150,
         unit: 'chậu',
         category: 'CHẬU TRỒNG CÂY',
+        subCategory:'Chậu vuông',
     },
     {
         id: 'p6',
@@ -72,6 +74,7 @@ export const localProduct: Product[] = [
         stock: 20,
         unit: 'chậu',
         category: 'CHẬU TRỒNG CÂY',
+        subCategory:'Chậu tròn',
     },
     {
         id: 'p7',

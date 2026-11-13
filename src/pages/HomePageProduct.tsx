@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../features/hooks';
-import { fetchProducts, setCategory } from '../features/products/productsSlice';
+import { fetchProducts, setCategory, setSubCategory } from '../features/products/productsSlice';
 import ProductCard from '../components/ProductCard';
 import { categories } from '../data/categories';
 import { useSearchParams } from 'react-router-dom';
 
 export default function HomePageProduct() {
     const dispatch = useAppDispatch();
-    const { items, status, activeCategory } = useAppSelector((state) => state.products);
+    const { items, status, activeCategory, activeSubCategory } = useAppSelector((state) => state.products);
+
     const [searchParams] = useSearchParams();
     const searchTerm = (searchParams.get('q') ?? '').trim().toLocaleLowerCase('vi');
 
@@ -17,22 +18,36 @@ export default function HomePageProduct() {
         }
     }, [status, dispatch]);
 
-    const visibleProducts = items.filter((product) => {
-        const matchesCategory =
-            activeCategory === 'Tất cả' || product.category === activeCategory;
+    let visibleProducts = activeCategory === 'Tất cả'
+        ? items
+        : items.filter(p => p.category === activeCategory);
 
-        const matchesName = product.name
-            .toLocaleLowerCase('vi')
-            .includes(searchTerm);
+    if (activeSubCategory) {
+        visibleProducts = visibleProducts.filter(p => p.subCategory === activeSubCategory);
+    }
 
-        return matchesCategory && matchesName;
-    });
+    if (searchTerm) {
+        visibleProducts = visibleProducts.filter(p =>
+            p.name.toLocaleLowerCase('vi').includes(searchTerm)
+        );
+    }
+
+    let title:string;
+    if (searchTerm) {
+        title = `Kết quả tìm kiếm cho: "${searchParams.get('q')}"`;
+    } else if (activeSubCategory) {
+        title = activeSubCategory;
+    } else if (activeCategory === 'Tất cả') {
+        title = 'SẢN PHẨM NỔI BẬT';
+    } else {
+        title = activeCategory;
+    }
 
     return (
         <div className="container py-4">
             <div className="row">
 
-
+                {/* SIDEBAR */}
                 <div className="col-md-3 mb-4">
                     <div className="card border-0 shadow-sm rounded-0">
                         <div className="card-header text-white text-center fw-bold py-3 rounded-0" style={{ backgroundColor: '#2d5016' }}>
@@ -40,7 +55,7 @@ export default function HomePageProduct() {
                         </div>
                         <ul className="list-group list-group-flush">
                             <li
-                                className={`list-group-item list-group-item-action border-0 py-2 ${activeCategory === 'Tất cả' ? 'fw-bold' : ''}`}
+                                className={`list-group-item list-group-item-action border-0 py-2 ${activeCategory === 'Tất cả' ? 'fw-bold bg-light' : ''}`}
                                 style={{ cursor: 'pointer', color: '#2d5016' }}
                                 onClick={() => dispatch(setCategory('Tất cả'))}
                             >
@@ -49,18 +64,24 @@ export default function HomePageProduct() {
                             {categories.map((cat) => (
                                 <div key={cat.label}>
                                     <li
-                                        className={`list-group-item list-group-item-action border-0 py-2 ${activeCategory === cat.label ? 'fw-bold' : ''}`}
+                                        className={`list-group-item list-group-item-action border-0 py-2 fw-semibold ${activeCategory === cat.label ? 'text-success bg-light' : ''}`}
                                         style={{ cursor: 'pointer', color: '#2d5016' }}
                                         onClick={() => dispatch(setCategory(cat.label))}
                                     >
                                         {cat.label}
                                     </li>
 
+                                    {/* SUB-CATEGORIES */}
                                     {cat.children && (
-                                        <ul className="list-unstyled ps-3 mb-2">
+                                        <ul className="list-unstyled ps-4 mb-2">
                                             {cat.children.map((sub, idx) => (
-                                                <li key={idx} className="py-1 small text-muted" style={{ cursor: 'pointer' }}>
-                                                    {sub}
+                                                <li
+                                                    key={idx}
+                                                    onClick={() => dispatch(setSubCategory(sub))}
+                                                    className={`py-1 small ${activeSubCategory === sub ? 'fw-bold text-success' : 'text-muted'}`}
+                                                    style={{ cursor: 'pointer', transition: 'color 0.2s' }}
+                                                >
+                                                    <span className="me-2 text-success">•</span> {sub}
                                                 </li>
                                             ))}
                                         </ul>
@@ -71,11 +92,12 @@ export default function HomePageProduct() {
                     </div>
                 </div>
 
-
+                {/* PRODUCT GRID */}
                 <div className="col-md-9">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h4 className="fw-bold mb-0" style={{ color: '#2d5016' }}>
-                            {activeCategory === 'Tất cả' ? 'SẢN PHẨM NỔI BẬT' : activeCategory}
+                        <h4 className="fw-bold mb-0" style={{ color: '#2d5016' +
+                                '' }}>
+                            {title}
                         </h4>
                     </div>
 

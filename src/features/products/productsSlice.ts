@@ -5,12 +5,15 @@ interface ProductsState {
     items: Product[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     activeCategory: string;
+    activeSubCategory: string;
 }
 
 const initialState: ProductsState = {
     items: [],
     status: 'idle',
     activeCategory: 'Tất cả',
+    activeSubCategory: '',
+
 };
 
 export const fetchProducts = createAsyncThunk('products/fetch', async () => {
@@ -25,7 +28,14 @@ const productsSlice = createSlice({
 
         setCategory: (state, action) => {
             state.activeCategory = action.payload;
+            state.activeSubCategory='';
         },
+        setSubCategory: (state, action) => {
+            state.activeSubCategory = action.payload;
+        }
+
+
+
     },
     extraReducers: (builder) => {
         builder
@@ -38,5 +48,5 @@ const productsSlice = createSlice({
     },
 });
 
-export const { setCategory } = productsSlice.actions;
+export const { setCategory,setSubCategory } = productsSlice.actions;
 export default productsSlice.reducer;
