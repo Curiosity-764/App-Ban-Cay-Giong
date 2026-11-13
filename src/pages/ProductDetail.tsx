@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAppSelector } from '../features/hooks';
+import { useAppDispatch, useAppSelector } from '../features/hooks';
+import { addToCart } from '../features/cart/cartSlice';
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>();
+    const dispatch = useAppDispatch();
     const product = useAppSelector((state) =>
         state.products.items.find((p) => p.id === id)
     );
-
-
     const [quantity, setQuantity] = useState(1);
 
     if (!product) {
@@ -20,10 +20,8 @@ export default function ProductDetail() {
         );
     }
 
-
     return (
         <div className="container py-4" style={{ minHeight: '80vh' }}>
-
             <nav aria-label="breadcrumb" className="mb-4">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item"><Link to="/" className="text-decoration-none">Trang chủ</Link></li>
@@ -33,7 +31,6 @@ export default function ProductDetail() {
             </nav>
 
             <div className="row bg-white p-4 rounded shadow-sm">
-                {/* Left Column: Image */}
                 <div className="col-md-5 mb-4">
                     <img
                         src={product.image}
@@ -43,7 +40,6 @@ export default function ProductDetail() {
                     />
                 </div>
 
-                {/* Right Column: Info & Checkout */}
                 <div className="col-md-7">
                     <h2 className="fw-bold mb-3">{product.name}</h2>
 
@@ -60,29 +56,37 @@ export default function ProductDetail() {
 
                     <p className="mb-4"><strong>Mô tả sản phẩm:</strong> <br /> {product.description}</p>
 
-                    {/* Quantity Selector */}
                     <div className="d-flex align-items-center mb-4">
                         <span className="me-3 fw-bold">Số lượng:</span>
                         <div className="input-group" style={{ width: '120px' }}>
                             <button
                                 className="btn btn-outline-secondary"
                                 onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                            >-</button>
+                            >
+                                -
+                            </button>
                             <input type="text" className="form-control text-center" value={quantity} readOnly />
                             <button
                                 className="btn btn-outline-secondary"
                                 onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                            >+</button>
+                            >
+                                +
+                            </button>
                         </div>
                         <span className="ms-3 text-muted small">{product.stock} sản phẩm có sẵn</span>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="d-flex gap-3 mt-4">
-                        <button className="btn btn-outline-success btn-lg px-4">
+                        <button
+                            className="btn btn-outline-success btn-lg px-4"
+                            onClick={() => dispatch(addToCart({ id: product.id, quantity }))}
+                        >
                             Thêm vào giỏ hàng
                         </button>
-                        <button className="btn btn-success btn-lg px-4 text-white" style={{ backgroundColor: '#2d5016' }}>
+                        <button
+                            className="btn btn-success btn-lg px-4 text-white"
+                            style={{ backgroundColor: '#2d5016' }}
+                        >
                             Mua ngay
                         </button>
                     </div>
