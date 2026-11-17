@@ -8,7 +8,8 @@ import { useSearchParams } from 'react-router-dom';
 export default function HomePageProduct() {
     const dispatch = useAppDispatch();
     const { items, status, activeCategory, activeSubCategory } = useAppSelector((state) => state.products);
-
+    
+    // 1. Get the search term from the URL (e.g., /san-pham?q=chuoi)
     const [searchParams] = useSearchParams();
     const searchTerm = (searchParams.get('q') ?? '').trim().toLocaleLowerCase('vi');
 
@@ -18,6 +19,7 @@ export default function HomePageProduct() {
         }
     }, [status, dispatch]);
 
+    // 2. Filter by Category and SubCategory
     let visibleProducts = activeCategory === 'Tất cả'
         ? items
         : items.filter(p => p.category === activeCategory);
@@ -26,13 +28,15 @@ export default function HomePageProduct() {
         visibleProducts = visibleProducts.filter(p => p.subCategory === activeSubCategory);
     }
 
+    // 3. Filter by Search Term (if there is a search query)
     if (searchTerm) {
-        visibleProducts = visibleProducts.filter(p =>
+        visibleProducts = visibleProducts.filter(p => 
             p.name.toLocaleLowerCase('vi').includes(searchTerm)
         );
     }
 
-    let title:string;
+    // 4. Determine the Title
+    let title = "";
     if (searchTerm) {
         title = `Kết quả tìm kiếm cho: "${searchParams.get('q')}"`;
     } else if (activeSubCategory) {
@@ -46,7 +50,6 @@ export default function HomePageProduct() {
     return (
         <div className="container py-4">
             <div className="row">
-
                 {/* SIDEBAR */}
                 <div className="col-md-3 mb-4">
                     <div className="card border-0 shadow-sm rounded-0">
@@ -71,12 +74,11 @@ export default function HomePageProduct() {
                                         {cat.label}
                                     </li>
 
-                                    {/* SUB-CATEGORIES */}
                                     {cat.children && (
                                         <ul className="list-unstyled ps-4 mb-2">
                                             {cat.children.map((sub, idx) => (
-                                                <li
-                                                    key={idx}
+                                                <li 
+                                                    key={idx} 
                                                     onClick={() => dispatch(setSubCategory(sub))}
                                                     className={`py-1 small ${activeSubCategory === sub ? 'fw-bold text-success' : 'text-muted'}`}
                                                     style={{ cursor: 'pointer', transition: 'color 0.2s' }}
@@ -95,8 +97,7 @@ export default function HomePageProduct() {
                 {/* PRODUCT GRID */}
                 <div className="col-md-9">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h4 className="fw-bold mb-0" style={{ color: '#2d5016' +
-                                '' }}>
+                        <h4 className="fw-bold mb-0" style={{ color: '#2d5016' }}>
                             {title}
                         </h4>
                     </div>

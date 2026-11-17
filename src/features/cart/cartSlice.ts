@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Product } from '../../data/products';
-
+import { getItem } from "../../utils/storage";
 export interface CartItem extends Product {
   quantity: number;
 }
@@ -10,8 +10,10 @@ interface CartState {
 }
 
 const initialState: CartState = {
-  items: [],
-};
+  items: getItem('cart') || [], 
+};;
+
+
 
 const cartSlice = createSlice({
   name: 'cart',
