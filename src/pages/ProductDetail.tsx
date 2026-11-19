@@ -18,7 +18,15 @@ export default function ProductDetail() {
 
     const handleAddToCart = () => {
         if (product) {
-            dispatch(addToCart({ product, quantity }));
+            const finalPrice = (product.onSale && product.percentage)
+                ? product.price - (product.price * product.percentage / 100)
+                : product.price;
+            
+            dispatch(addToCart({ 
+                product: { ...product, price: finalPrice }, 
+                quantity 
+            }));
+            
             setShowPopup(true);
             setTimeout(() => setShowPopup(false), 2000);
         }
@@ -100,9 +108,22 @@ export default function ProductDetail() {
                         <span className="text-muted small">Mã SP: {product.id}</span>
                     </div>
 
-                    <h2 className="fw-bold mb-4" style={{ color: '#2d5016', fontSize: '2.5rem' }}>
-                        {product.price.toLocaleString('vi-VN')} ₫ <span className="fs-6 text-muted fw-normal ms-2">/ {product.unit}</span>
-                    </h2>
+                    {product.onSale && product.percentage ? (
+                        <div className="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                            <h2 className="fw-bold mb-0" style={{ color: '#d32f2f', fontSize: '2.5rem' }}>
+                                {(product.price - (product.price * product.percentage / 100)).toLocaleString('vi-VN')} ₫
+                                <span className="fs-6 text-muted fw-normal ms-2">/ {product.unit}</span>
+                            </h2>
+                            <span className="fs-5 text-muted text-decoration-line-through">
+                                {product.price.toLocaleString('vi-VN')} ₫
+                            </span>
+                            <span className="badge bg-danger fs-6">-{product.percentage}%</span>
+                        </div>
+                    ) : (
+                        <h2 className="fw-bold mb-4" style={{ color: '#2d5016', fontSize: '2.5rem' }}>
+                            {product.price.toLocaleString('vi-VN')} ₫ <span className="fs-6 text-muted fw-normal ms-2">/ {product.unit}</span>
+                        </h2>
+                    )}
 
                     <p className="text-secondary mb-4" style={{ lineHeight: '1.8' }}>
                         {product.description}
