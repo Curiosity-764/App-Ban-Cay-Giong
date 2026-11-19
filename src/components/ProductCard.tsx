@@ -2,9 +2,20 @@ import type { Product } from '../data/products';
 import { Link } from 'react-router-dom';
 
 export default function ProductCard({ product }: { product: Product }) {
+    const hasDiscount = product.onSale && product.percentage;
+    const salePrice = hasDiscount 
+        ? product.price - (product.price * product.percentage! / 100) 
+        : product.price;
+
     return (
         <Link to={`/product/${product.id}`} className="text-decoration-none">
-            <div className="card h-100 border-0 shadow-sm product-card">
+            <div className="card h-100 border-0 shadow-sm product-card position-relative">
+                {hasDiscount && (
+                    <span className="position-absolute top-0 start-0 badge bg-danger m-2 fs-6" style={{ zIndex: 1 }}>
+                        -{product.percentage}%
+                    </span>
+                )}
+
                 <img
                     src={product.image}
                     className="card-img-top"
@@ -18,10 +29,15 @@ export default function ProductCard({ product }: { product: Product }) {
                     <p className="card-text text-muted small flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {product.description}
                     </p>
-                    <div className="d-flex align-items-baseline gap-1 mt-2">
+                    <div className="d-flex align-items-baseline gap-2 mt-2">
                         <span className="fw-bold fs-5" style={{ color: '#2d5016' }}>
-                            {product.price.toLocaleString('vi-VN')} ₫
+                            {salePrice.toLocaleString('vi-VN')} ₫
                         </span>
+                        {hasDiscount && (
+                            <span className="text-muted text-decoration-line-through small">
+                                {product.price.toLocaleString('vi-VN')} ₫
+                            </span>
+                        )}
                         <span className="text-muted small">/ {product.unit}</span>
                     </div>
 
