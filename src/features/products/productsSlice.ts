@@ -6,6 +6,7 @@ interface ProductsState {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     activeCategory: string;
     activeSubCategory: string;
+    isSaleFilterActive: boolean;
 }
 
 const initialState: ProductsState = {
@@ -13,7 +14,7 @@ const initialState: ProductsState = {
     status: 'idle',
     activeCategory: 'Tất cả',
     activeSubCategory: '',
-
+    isSaleFilterActive: false,
 };
 
 export const fetchProducts = createAsyncThunk('products/fetch', async () => {
@@ -25,17 +26,22 @@ const productsSlice = createSlice({
     name: 'products',
     initialState,
     reducers: {
-
         setCategory: (state, action) => {
             state.activeCategory = action.payload;
-            state.activeSubCategory='';
+            state.activeSubCategory = '';
+            state.isSaleFilterActive = false;
         },
         setSubCategory: (state, action) => {
             state.activeSubCategory = action.payload;
+            state.isSaleFilterActive = false;
+        },
+        setSaleFilter: (state, action) => {
+            state.isSaleFilterActive = action.payload;
+            if (action.payload) {
+                state.activeCategory = 'Tất cả';
+                state.activeSubCategory = '';
+            }
         }
-
-
-
     },
     extraReducers: (builder) => {
         builder
@@ -48,5 +54,5 @@ const productsSlice = createSlice({
     },
 });
 
-export const { setCategory,setSubCategory } = productsSlice.actions;
+export const { setCategory, setSubCategory, setSaleFilter } = productsSlice.actions;
 export default productsSlice.reducer;
