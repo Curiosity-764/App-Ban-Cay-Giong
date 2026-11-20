@@ -7,6 +7,7 @@ import WishlistPage from "./pages/WishlistPage.tsx";
 import CartPage from "./pages/CartPage.tsx";
 import {useCart} from "./features/hooks"
 import CheckoutPage from './pages/CheckoutPage.tsx';
+import VideoPage from './pages/VideoPage';
 
 export default function App() {
   useCart()
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/san-pham" element={<HomePageProduct />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/video" element={<VideoPage />} />
           <Route path="/cart" element={<CartPage />} />
 
           <Route
