@@ -110,12 +110,11 @@ export default function CartPage() {
                                     {total.toLocaleString('vi-VN')} đ
                                 </strong>
                             </div>
-                            
-                            <button 
-                                className="btn btn-success w-100 mb-3 py-3 fw-bold" 
+
+                            <button
+                                className="btn btn-success w-100 mb-3 py-3 fw-bold"
                                 style={{ backgroundColor: '#2d5016' }}
-                                onClick={() => alert('Đặt hàng thành công!')}
-                            >
+                                onClick={() => window.location.href = '/checkout'}                            >
                                 Thanh toán
                             </button>
                             
